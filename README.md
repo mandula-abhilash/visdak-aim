@@ -1,4 +1,4 @@
-# Axios Interceptor Module
+# VISDAK AIM : Axios Interceptor Module
 
 A production-ready Axios interceptor module with TypeScript support, providing robust API communication features including authentication, request/response interceptors, error handling, and token management.
 
@@ -13,16 +13,22 @@ A production-ready Axios interceptor module with TypeScript support, providing r
 
 ## Installation
 
+First, install the package:
 ```bash
 npm install github:mandula-abhilash/visdak-aim
+```
+
+Since this library uses `axios` as a peer dependency, ensure it's installed:
+```bash
+npm install axios
 ```
 
 ## Usage
 
 ### Basic Setup
 
-```typescript
-import { createAxiosInstance, tokenManager, ApiConfig } from 'axios-interceptor-module';
+```ts
+import { createAxiosInstance, tokenManager, ApiConfig } from 'visdak-aim';
 
 const config: ApiConfig = {
   baseURL: 'https://api.example.com',
@@ -43,7 +49,7 @@ const api = createAxiosInstance(config);
 
 ### Token Management
 
-```typescript
+```ts
 // Set token after login
 tokenManager.setToken('your-jwt-token');
 
@@ -56,7 +62,7 @@ tokenManager.removeToken();
 
 ### Making API Calls
 
-```typescript
+```ts
 // GET request
 try {
   const response = await api.get('/users');
@@ -77,11 +83,26 @@ try {
 }
 ```
 
+### Retry Logic Example
+
+```ts
+const config: ApiConfig = {
+  baseURL: 'https://api.example.com',
+  retryCount: 3,
+  retryDelay: 2000,
+  onRetry: (retryCount) => {
+    console.log(`Retry attempt: ${retryCount}`);
+  },
+};
+
+const api = createAxiosInstance(config);
+```
+
 ## API Response Structure
 
 ### Success Response
 
-```typescript
+```ts
 {
   status: 'success',
   data: {
@@ -93,7 +114,7 @@ try {
 
 ### Error Response
 
-```typescript
+```ts
 {
   status: 'error',
   message: string,
@@ -107,35 +128,35 @@ try {
 ## Status Code Guidelines
 
 | Status Code | Description                    | Usage                                    |
-|------------|--------------------------------|------------------------------------------|
-| 200        | OK                             | Successful request                       |
-| 201        | Created                        | Resource created successfully            |
-| 204        | No Content                     | Successful request with no content       |
-| 400        | Bad Request                    | Invalid request parameters               |
-| 401        | Unauthorized                   | Missing or invalid authentication        |
-| 403        | Forbidden                      | Insufficient permissions                 |
-| 404        | Not Found                      | Resource not found                       |
-| 409        | Conflict                       | Resource conflict                        |
-| 500        | Internal Server Error          | Server-side error                        |
-| 502        | Bad Gateway                    | Upstream server error                    |
+|-------------|--------------------------------|------------------------------------------|
+| 200         | OK                             | Successful request                       |
+| 201         | Created                        | Resource created successfully            |
+| 204         | No Content                     | Successful request with no content       |
+| 400         | Bad Request                    | Invalid request parameters               |
+| 401         | Unauthorized                   | Missing or invalid authentication        |
+| 403         | Forbidden                      | Insufficient permissions                 |
+| 404         | Not Found                      | Resource not found                       |
+| 409         | Conflict                       | Resource conflict                        |
+| 500         | Internal Server Error          | Server-side error                        |
+| 502         | Bad Gateway                    | Upstream server error                    |
 
 ## Configuration Options
 
 | Option          | Type       | Description                                  | Default |
-|----------------|------------|----------------------------------------------|---------|
-| baseURL        | string     | Base URL for API requests                    | -       |
-| timeout        | number     | Request timeout in milliseconds              | 10000   |
-| retryCount     | number     | Number of retry attempts                     | 3       |
-| retryDelay     | number     | Delay between retries in milliseconds        | 1000    |
-| onUnauthorized | function   | Callback for 401 errors                      | -       |
-| onForbidden    | function   | Callback for 403 errors                      | -       |
-| defaultHeaders | object     | Default headers for all requests             | {}      |
+|-----------------|------------|----------------------------------------------|---------|
+| baseURL         | string     | Base URL for API requests                    | -       |
+| timeout         | number     | Request timeout in milliseconds              | 10000   |
+| retryCount      | number     | Number of retry attempts                     | 3       |
+| retryDelay      | number     | Delay between retries in milliseconds        | 1000    |
+| onUnauthorized  | function   | Callback for 401 errors                      | -       |
+| onForbidden     | function   | Callback for 403 errors                      | -       |
+| defaultHeaders  | object     | Default headers for all requests             | {}      |
 
 ## Advanced Usage
 
 ### Custom Error Handling
 
-```typescript
+```ts
 const config: ApiConfig = {
   baseURL: 'https://api.example.com',
   onUnauthorized: () => {
@@ -153,7 +174,7 @@ const config: ApiConfig = {
 
 ### With TypeScript
 
-```typescript
+```ts
 interface User {
   id: number;
   name: string;
