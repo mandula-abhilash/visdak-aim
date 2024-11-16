@@ -14,7 +14,7 @@ A production-ready Axios interceptor module with TypeScript support, providing r
 ## Installation
 
 ```bash
-npm install github:your-username/axios-interceptor-module
+npm install github:mandula-abhilash/visdak-aim
 ```
 
 ## Usage

@@ -1,28 +1,22 @@
-import js from '@eslint/js';
-import globals from 'globals';
-import reactHooks from 'eslint-plugin-react-hooks';
-import reactRefresh from 'eslint-plugin-react-refresh';
-import tseslint from 'typescript-eslint';
+import js from "@eslint/js";
+import globals from "globals";
+import tseslint from "typescript-eslint";
 
 export default tseslint.config(
-  { ignores: ['dist'] },
+  { ignores: ["dist"] }, // Ignore the 'dist' folder
   {
-    extends: [js.configs.recommended, ...tseslint.configs.recommended],
-    files: ['**/*.{ts,tsx}'],
+    extends: [js.configs.recommended, ...tseslint.configs.recommended], // Extend recommended rules
+    files: ["**/*.{ts,tsx}"], // Apply only to TypeScript files
     languageOptions: {
-      ecmaVersion: 2020,
-      globals: globals.browser,
-    },
-    plugins: {
-      'react-hooks': reactHooks,
-      'react-refresh': reactRefresh,
+      ecmaVersion: 2020, // Use modern ECMAScript version
+      globals: globals.browser, // Use browser-specific globals if necessary
     },
     rules: {
-      ...reactHooks.configs.recommended.rules,
-      'react-refresh/only-export-components': [
-        'warn',
-        { allowConstantExport: true },
-      ],
+      "no-unused-vars": ["warn"], // Warn for unused variables
+      "no-console": ["warn"], // Warn for console statements
+      "@typescript-eslint/no-unused-vars": ["error"], // Error for unused vars in TypeScript
+      "@typescript-eslint/no-explicit-any": ["warn"], // Warn for 'any' type usage
+      "@typescript-eslint/explicit-function-return-type": ["warn"], // Warn if function return types are not defined
     },
   }
 );

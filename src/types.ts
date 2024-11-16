@@ -5,6 +5,7 @@ export interface ApiConfig {
   retryDelay?: number;
   onUnauthorized?: () => void;
   onForbidden?: () => void;
+  onRetry?: (retryCount: number) => void;
   defaultHeaders?: Record<string, string>;
 }
 

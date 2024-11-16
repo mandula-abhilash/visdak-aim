@@ -1,13 +1,25 @@
 import { TokenManager } from './types';
 
-let authToken: string | null = null;
+let customTokenManager: TokenManager | null = null;
 
 export const tokenManager: TokenManager = {
-  getToken: () => authToken,
+  getToken: () => customTokenManager?.getToken() || localStorage.getItem('authToken'),
   setToken: (token: string) => {
-    authToken = token;
+    if (customTokenManager) {
+      customTokenManager.setToken(token);
+    } else {
+      localStorage.setItem('authToken', token);
+    }
   },
   removeToken: () => {
-    authToken = null;
-  }
+    if (customTokenManager) {
+      customTokenManager.removeToken();
+    } else {
+      localStorage.removeItem('authToken');
+    }
+  },
+};
+
+export const setCustomTokenManager = (manager: TokenManager) => {
+  customTokenManager = manager;
 };

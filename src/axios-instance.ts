@@ -14,6 +14,7 @@ export const createAxiosInstance = (config: ApiConfig): AxiosInstance => {
   axiosRetry(instance, {
     retries: config.retryCount || 3,
     retryDelay: (retryCount) => {
+      config.onRetry?.(retryCount); // Notify about retries
       const delay = config.retryDelay || 1000;
       return retryCount * delay;
     },
