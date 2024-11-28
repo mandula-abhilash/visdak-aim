@@ -15,10 +15,9 @@
     "node": ">=16.0.0"
   },
   "files": [
-    "dist"
+    "src"
   ],
   "scripts": {
-    "build": "tsc",
     "lint": "eslint src --ext .ts"
   },
   "devDependencies": {
