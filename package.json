@@ -2,8 +2,8 @@
   "name": "visdak-aim",
   "version": "1.0.0",
   "type": "module",
-  "main": "dist/index.js",
-  "types": "dist/index.d.ts",
+  "main": "src/index.js",
+  "types": "src/index.d.ts",
   "description": "A reusable Axios interceptor module for managing API requests in TypeScript by VISDAK.",
   "license": "MIT",
   "repository": {
