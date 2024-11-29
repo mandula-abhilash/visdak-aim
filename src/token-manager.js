@@ -9,31 +9,65 @@ const isLocalStorageAvailable = () => {
 };
 
 export const tokenManager = {
-  getToken: () => {
-    if (customTokenManager && customTokenManager.getToken) {
-      return customTokenManager.getToken();
+  getAccessToken: () => {
+    if (customTokenManager && customTokenManager.getAccessToken) {
+      return customTokenManager.getAccessToken();
     }
     if (isLocalStorageAvailable()) {
-      return localStorage.getItem("authToken");
+      return localStorage.getItem("accessToken");
     }
-    throw new Error("localStorage is not available in this environment.");
+    return null;
   },
-  setToken: (token) => {
-    if (customTokenManager && customTokenManager.setToken) {
-      customTokenManager.setToken(token);
-    } else if (isLocalStorageAvailable()) {
-      localStorage.setItem("authToken", token);
-    } else {
-      throw new Error("localStorage is not available in this environment.");
+
+  getRefreshToken: () => {
+    if (customTokenManager && customTokenManager.getRefreshToken) {
+      return customTokenManager.getRefreshToken();
+    }
+    if (isLocalStorageAvailable()) {
+      return localStorage.getItem("refreshToken");
+    }
+    return null;
+  },
+
+  setTokens: (accessToken, refreshToken) => {
+    if (customTokenManager && customTokenManager.setTokens) {
+      customTokenManager.setTokens(accessToken, refreshToken);
+      return;
+    }
+    if (isLocalStorageAvailable()) {
+      if (accessToken) localStorage.setItem("accessToken", accessToken);
+      if (refreshToken) localStorage.setItem("refreshToken", refreshToken);
     }
   },
-  removeToken: () => {
-    if (customTokenManager && customTokenManager.removeToken) {
-      customTokenManager.removeToken();
-    } else if (isLocalStorageAvailable()) {
-      localStorage.removeItem("authToken");
-    } else {
-      throw new Error("localStorage is not available in this environment.");
+
+  removeTokens: () => {
+    if (customTokenManager && customTokenManager.removeTokens) {
+      customTokenManager.removeTokens();
+      return;
+    }
+    if (isLocalStorageAvailable()) {
+      localStorage.removeItem("accessToken");
+      localStorage.removeItem("refreshToken");
+    }
+  },
+
+  isTokenExpired: (token) => {
+    if (!token) return true;
+    try {
+      const base64Url = token.split(".")[1];
+      const base64 = base64Url.replace(/-/g, "+").replace(/_/g, "/");
+      const jsonPayload = decodeURIComponent(
+        atob(base64)
+          .split("")
+          .map((c) => {
+            return "%" + ("00" + c.charCodeAt(0).toString(16)).slice(-2);
+          })
+          .join("")
+      );
+      const { exp } = JSON.parse(jsonPayload);
+      return exp * 1000 < Date.now();
+    } catch (error) {
+      return true;
     }
   },
 };
