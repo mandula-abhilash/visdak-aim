@@ -22,12 +22,17 @@
     "lint": "eslint src --ext .js"
   },
   "devDependencies": {
-    "eslint": "^8.57.0" 
+    "eslint": "^8.57.0"
   },
   "peerDependencies": {
-    "axios": "^1.7.8" 
+    "axios": "^1.7.8"
   },
   "dependencies": {
-    "axios-retry": "^4.5.0" 
-  }
+    "axios-retry": "^4.5.0"
+  },
+  "files": [
+    "src",
+    "README.md",
+    "LICENSE"
+  ]
 }
