@@ -2,33 +2,32 @@
   "name": "visdak-aim",
   "version": "1.0.0",
   "type": "module",
-  "main": "dist/index.js",
-  "types": "dist/index.d.ts",
-  "description": "A reusable Axios interceptor module for managing API requests in TypeScript by VISDAK.",
+  "main": "src/index.js",
+  "description": "A reusable Axios interceptor module for managing API requests in JavaScript by VISDAK.",
   "license": "MIT",
   "repository": {
     "type": "git",
     "url": "https://github.com/mandula-abhilash/visdak-aim.git"
   },
-  "keywords": ["axios", "interceptor", "typescript", "http-client"],
+  "keywords": [
+    "axios",
+    "interceptor",
+    "http-client"
+  ],
   "engines": {
     "node": ">=16.0.0"
   },
-  "files": [
-    "dist"
-  ],
   "scripts": {
-    "build": "tsc",
-    "lint": "eslint src --ext .ts"
+    "start": "node test-module.js",
+    "lint": "eslint src --ext .js"
   },
   "devDependencies": {
-    "@types/node": "^20.11.24",
-    "@typescript-eslint/eslint-plugin": "^7.1.0",
-    "@typescript-eslint/parser": "^7.1.0",
-    "eslint": "^8.57.0",
-    "typescript": "^5.3.3"
+    "eslint": "^8.57.0" 
   },
   "peerDependencies": {
-    "axios": "^1.6.7"
+    "axios": "^1.7.8" 
+  },
+  "dependencies": {
+    "axios-retry": "^4.5.0" 
   }
 }
