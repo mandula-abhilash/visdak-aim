@@ -43,9 +43,8 @@ pnpm-lock.yaml
 # Coverage reports
 coverage
 
-# TypeScript output
-*.js
-*.d.ts
+# Test File
+test-module.js
 
 # macOS system files
 .AppleDouble
