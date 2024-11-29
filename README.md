@@ -1,24 +1,25 @@
-# VISDAK AIM : Axios Interceptor Module
+# VISDAK AIM: Axios Interceptor Module
 
-A production-ready Axios interceptor module with TypeScript support, providing robust API communication features including authentication, request/response interceptors, error handling, and token management.
+A production-ready Axios interceptor module providing robust API communication features including authentication, request/response interceptors, error handling, and token management.
 
 ## Features
 
-- 🔐 Token-based authentication
-- 🔄 Automatic retry mechanism for failed requests
-- 🎯 Standardized request/response handling
-- 🚨 Comprehensive error handling
-- 📝 TypeScript support
-- ⚙️ Configurable settings
+- 🔐 **Token-based Authentication**: Easily manage authentication tokens.
+- 🔄 **Automatic Retry Mechanism**: Retries failed requests based on configuration.
+- 🎯 **Standardized Request/Response Handling**: Consistent API interactions.
+- 🚨 **Comprehensive Error Handling**: Graceful error management and callbacks.
+- ⚙️ **Configurable Settings**: Flexible setup to suit various project needs.
 
 ## Installation
 
 First, install the package:
+
 ```bash
 npm install github:mandula-abhilash/visdak-aim
 ```
 
 Since this library uses `axios` as a peer dependency, ensure it's installed:
+
 ```bash
 npm install axios
 ```
@@ -27,10 +28,10 @@ npm install axios
 
 ### Basic Setup
 
-```ts
-import { createAxiosInstance, tokenManager, ApiConfig } from 'visdak-aim';
+```javascript
+import { createAxiosInstance } from 'visdak-aim';
 
-const config: ApiConfig = {
+const api = createAxiosInstance({
   baseURL: 'https://api.example.com',
   timeout: 5000,
   retryCount: 3,
@@ -42,14 +43,14 @@ const config: ApiConfig = {
   defaultHeaders: {
     'Content-Type': 'application/json',
   },
-};
-
-const api = createAxiosInstance(config);
+});
 ```
 
 ### Token Management
 
-```ts
+```javascript
+import { tokenManager } from 'visdak-aim';
+
 // Set token after login
 tokenManager.setToken('your-jwt-token');
 
@@ -62,7 +63,7 @@ tokenManager.removeToken();
 
 ### Making API Calls
 
-```ts
+```javascript
 // GET request
 try {
   const response = await api.get('/users');
@@ -85,79 +86,78 @@ try {
 
 ### Retry Logic Example
 
-```ts
-const config: ApiConfig = {
+```javascript
+const api = createAxiosInstance({
   baseURL: 'https://api.example.com',
   retryCount: 3,
   retryDelay: 2000,
   onRetry: (retryCount) => {
     console.log(`Retry attempt: ${retryCount}`);
   },
-};
-
-const api = createAxiosInstance(config);
+});
 ```
 
 ## API Response Structure
 
 ### Success Response
 
-```ts
+```javascript
 {
   status: 'success',
   data: {
     // Response data
   },
-  message?: string
+  message: 'Request successful',
 }
 ```
 
 ### Error Response
 
-```ts
+```javascript
 {
   status: 'error',
-  message: string,
+  message: 'An error occurred',
   error: {
-    code: number,
-    details?: string
-  }
+    code: 400,
+    details: 'Invalid request parameters',
+  },
 }
 ```
 
 ## Status Code Guidelines
 
-| Status Code | Description                    | Usage                                    |
-|-------------|--------------------------------|------------------------------------------|
-| 200         | OK                             | Successful request                       |
-| 201         | Created                        | Resource created successfully            |
-| 204         | No Content                     | Successful request with no content       |
-| 400         | Bad Request                    | Invalid request parameters               |
-| 401         | Unauthorized                   | Missing or invalid authentication        |
-| 403         | Forbidden                      | Insufficient permissions                 |
-| 404         | Not Found                      | Resource not found                       |
-| 409         | Conflict                       | Resource conflict                        |
-| 500         | Internal Server Error          | Server-side error                        |
-| 502         | Bad Gateway                    | Upstream server error                    |
+| Status Code | Description           | Usage                                     |
+|-------------|-----------------------|-------------------------------------------|
+| 200         | OK                    | Successful request                        |
+| 201         | Created               | Resource created successfully             |
+| 204         | No Content            | Successful request with no content        |
+| 400         | Bad Request           | Invalid request parameters                |
+| 401         | Unauthorized          | Missing or invalid authentication         |
+| 403         | Forbidden             | Insufficient permissions                  |
+| 404         | Not Found             | Resource not found                        |
+| 409         | Conflict              | Resource conflict                         |
+| 500         | Internal Server Error | Server-side error                         |
+| 502         | Bad Gateway           | Upstream server error                     |
 
 ## Configuration Options
 
-| Option          | Type       | Description                                  | Default |
-|-----------------|------------|----------------------------------------------|---------|
-| baseURL         | string     | Base URL for API requests                    | -       |
-| timeout         | number     | Request timeout in milliseconds              | 10000   |
-| retryCount      | number     | Number of retry attempts                     | 3       |
-| retryDelay      | number     | Delay between retries in milliseconds        | 1000    |
-| onUnauthorized  | function   | Callback for 401 errors                      | -       |
-| onForbidden     | function   | Callback for 403 errors                      | -       |
-| defaultHeaders  | object     | Default headers for all requests             | {}      |
+| Option          | Type     | Description                                   | Default |
+|-----------------|----------|-----------------------------------------------|---------|
+| `baseURL`       | `string` | Base URL for API requests                     | -       |
+| `timeout`       | `number` | Request timeout in milliseconds               | `10000` |
+| `retryCount`    | `number` | Number of retry attempts                      | `3`     |
+| `retryDelay`    | `number` | Delay between retries in milliseconds         | `1000`  |
+| `onUnauthorized`| `function`| Callback for 401 Unauthorized errors         | -       |
+| `onForbidden`   | `function`| Callback for 403 Forbidden errors            | -       |
+| `onRetry`       | `function`| Callback for each retry attempt              | -       |
+| `defaultHeaders`| `object` | Default headers for all requests              | `{}`    |
 
 ## Advanced Usage
 
 ### Custom Error Handling
 
-```ts
-const config: ApiConfig = {
+```javascript
+const api = createAxiosInstance({
   baseURL: 'https://api.example.com',
   onUnauthorized: () => {
     // Clear local storage
@@ -169,27 +169,77 @@ const config: ApiConfig = {
     // Handle forbidden access
     window.location.href = '/forbidden';
   },
-};
+});
 ```
 
-### With TypeScript
+### Custom Token Manager
 
-```ts
-interface User {
-  id: number;
-  name: string;
-  email: string;
-}
+If you're using the module in a non-browser environment (e.g., Node.js), `localStorage` won't be available. You can provide a custom token manager.
 
-// GET request with type
-const response = await api.get<User>('/user/1');
-const user: User = response.data;
+```javascript
+import { setCustomTokenManager } from 'visdak-aim';
 
-// POST request with type
-const newUser = await api.post<User>('/users', {
-  name: 'John Doe',
-  email: 'john@example.com',
+const customTokenManager = {
+  getToken: () => {
+    // Implement your token retrieval logic
+    return myCustomStorage.get('authToken');
+  },
+  setToken: (token) => {
+    // Implement your token storage logic
+    myCustomStorage.set('authToken', token);
+  },
+  removeToken: () => {
+    // Implement your token removal logic
+    myCustomStorage.remove('authToken');
+  },
+};
+
+setCustomTokenManager(customTokenManager);
+```
+
+### Handling Token Refresh
+
+```javascript
+const onUnauthorized = async () => {
+  try {
+    const refreshToken = tokenManager.getToken(); // Assume this stores the refresh token
+    const response = await api.post('/refresh-token', { refreshToken });
+    const newAccessToken = response.data.data.accessToken;
+    tokenManager.setToken(newAccessToken);
+    console.log('Token refreshed successfully');
+  } catch (error) {
+    console.error('Token refresh failed:', error);
+    // Handle failed token refresh (e.g., redirect to login)
+    window.location.href = '/login';
+  }
+};
+
+const api = createAxiosInstance({
+  baseURL: 'https://api.example.com',
+  onUnauthorized,
 });
+```
+
+## Token Management in Node.js
+
+Since `localStorage` is not available in Node.js, you must set up a custom token manager when using the module in a Node.js environment.
+
+```javascript
+import { setCustomTokenManager } from 'visdak-aim';
+
+const customTokenManager = {
+  getToken: () => {
+    return myNodeStorage.get('authToken');
+  },
+  setToken: (token) => {
+    myNodeStorage.set('authToken', token);
+  },
+  removeToken: () => {
+    myNodeStorage.remove('authToken');
+  },
+};
+
+setCustomTokenManager(customTokenManager);
 ```
 
 ## Contributing
@@ -203,3 +253,7 @@ const newUser = await api.post<User>('/users', {
 ## License
 
 MIT License - see the [LICENSE](LICENSE) file for details
+
+---
+
+Feel free to reach out if you have any questions or need further assistance!
