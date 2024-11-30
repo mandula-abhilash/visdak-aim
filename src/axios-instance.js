@@ -10,7 +10,18 @@ export const createAxiosInstance = (config) => {
     withCredentials: true,
   });
 
-  // Configure retry mechanism
+  const defaultOnUnauthorized = () => {
+    console.log("User is unauthorized. Logging out...");
+    tokenManager.removeTokens();
+    if (typeof window !== "undefined") {
+      window.location.href = "/";
+    }
+  };
+
+  const defaultOnForbidden = () => {
+    console.log("Access forbidden.");
+  };
+
   axiosRetry(instance, {
     retries: config.retryCount || 3,
     retryDelay: (retryCount) => {
@@ -105,17 +116,15 @@ export const createAxiosInstance = (config) => {
         } catch (refreshError) {
           processQueue(refreshError, null);
           tokenManager.removeTokens();
-          if (config.onUnauthorized) {
-            config.onUnauthorized();
-          }
+          (config.onUnauthorized || defaultOnUnauthorized)();
           return Promise.reject(refreshError);
         } finally {
           isRefreshing = false;
         }
       }
 
-      if (error.response?.status === 403 && config.onForbidden) {
-        config.onForbidden();
+      if (error.response?.status === 403) {
+        (config.onForbidden || defaultOnForbidden)();
       }
 
       return Promise.reject(error);
