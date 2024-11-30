@@ -90,6 +90,8 @@ export const createAxiosInstance = (config) => {
     }
   );
 
+  console.log("Axios interceptor registered");
+
   return instance;
 };
 
