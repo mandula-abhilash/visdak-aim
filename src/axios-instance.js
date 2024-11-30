@@ -41,8 +41,31 @@ export const createAxiosInstance = (config) => {
   instance.interceptors.response.use(
     (response) => response,
     async (error) => {
-      if (error.response?.status === 401) {
-        // Log out the user by redirecting to login page
+      const originalRequest = error.config;
+
+      if (
+        error.response?.status === 401 &&
+        !originalRequest._retry &&
+        !originalRequest.url.includes("/api/auth/refresh-token")
+      ) {
+        originalRequest._retry = true;
+        try {
+          // Attempt to refresh tokens
+          await instance.post("/api/auth/refresh-token");
+          // Retry the original request
+          return instance(originalRequest);
+        } catch (refreshError) {
+          // Refresh failed, redirect to login
+          (config.onUnauthorized || defaultOnUnauthorized)();
+          return Promise.reject(refreshError);
+        }
+      }
+
+      if (
+        error.response?.status === 401 &&
+        originalRequest.url.includes("/api/auth/refresh-token")
+      ) {
+        // Refresh token is invalid or expired
         (config.onUnauthorized || defaultOnUnauthorized)();
         return Promise.reject(error);
       }
