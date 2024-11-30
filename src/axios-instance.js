@@ -20,42 +20,51 @@ export const createAxiosInstance = (config) => {
     console.log("Access forbidden.");
   };
 
-  axiosRetry(instance, {
-    retries: config.retryCount || 3,
-    retryDelay: (retryCount) => {
-      if (config.onRetry) {
-        config.onRetry(retryCount);
-      }
-      const delay = config.retryDelay || 1000;
-      return retryCount * delay;
-    },
-    retryCondition: (error) => {
-      return (
-        axiosRetry.isNetworkOrIdempotentRequestError(error) ||
-        (error.response?.status ? error.response.status >= 500 : false)
-      );
-    },
-  });
+  // axiosRetry(instance, {
+  //   retries: config.retryCount || 3,
+  //   retryDelay: (retryCount) => {
+  //     if (config.onRetry) {
+  //       config.onRetry(retryCount);
+  //     }
+  //     const delay = config.retryDelay || 1000;
+  //     return retryCount * delay;
+  //   },
+  //   retryCondition: (error) => {
+  //     return (
+  //       axiosRetry.isNetworkOrIdempotentRequestError(error) ||
+  //       (error.response?.status ? error.response.status >= 500 : false)
+  //     );
+  //   },
+  // });
 
   // Response interceptor
   instance.interceptors.response.use(
     (response) => response,
     async (error) => {
+      console.log("Interceptor caught an error:", error);
+
       const originalRequest = error.config;
 
+      if (!error.response) {
+        console.error("No response received:", error);
+        return Promise.reject(error);
+      }
+
       if (
-        error.response?.status === 401 &&
+        error.response.status === 401 &&
         !originalRequest._retry &&
         !originalRequest.url.includes("/api/auth/refresh-token")
       ) {
+        console.log("Access token expired. Attempting to refresh...");
         originalRequest._retry = true;
         try {
-          // Attempt to refresh tokens
           await instance.post("/api/auth/refresh-token");
-          // Retry the original request
+          console.log(
+            "Token refreshed successfully. Retrying original request..."
+          );
           return instance(originalRequest);
         } catch (refreshError) {
-          // Refresh failed, redirect to login
+          console.error("Token refresh failed:", refreshError);
           (config.onUnauthorized || defaultOnUnauthorized)();
           return Promise.reject(refreshError);
         }
