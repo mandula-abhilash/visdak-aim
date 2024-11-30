@@ -41,7 +41,7 @@ export const createAxiosInstance = (config) => {
   instance.interceptors.response.use(
     (response) => response,
     async (error) => {
-      console.log("Interceptor caught an error:", error);
+      console.log("Interceptor error handler invoked");
 
       const originalRequest = error.config;
 
@@ -49,6 +49,8 @@ export const createAxiosInstance = (config) => {
         console.error("No response received:", error);
         return Promise.reject(error);
       }
+
+      console.log("Error response status:", error.response.status);
 
       if (
         error.response.status === 401 &&
@@ -90,3 +92,5 @@ export const createAxiosInstance = (config) => {
 
   return instance;
 };
+
+console.log("Axios interceptor registered");
