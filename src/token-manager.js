@@ -2,7 +2,7 @@ let customTokenManager = null;
 
 const isLocalStorageAvailable = () => {
   try {
-    return typeof localStorage !== "undefined";
+    return typeof window !== "undefined" && typeof localStorage !== "undefined";
   } catch (error) {
     return false;
   }
@@ -41,6 +41,7 @@ export const tokenManager = {
   },
 
   removeTokens: () => {
+    console.log("Attempting to remove tokens...");
     if (customTokenManager && customTokenManager.removeTokens) {
       customTokenManager.removeTokens();
       return;
@@ -48,6 +49,10 @@ export const tokenManager = {
     if (isLocalStorageAvailable()) {
       localStorage.removeItem("accessToken");
       localStorage.removeItem("refreshToken");
+    } else {
+      console.log(
+        "Skipping token removal: localStorage is not available (server-side)."
+      );
     }
   },
 
@@ -67,6 +72,7 @@ export const tokenManager = {
       const { exp } = JSON.parse(jsonPayload);
       return exp * 1000 < Date.now();
     } catch (error) {
+      console.error("Error decoding token:", error);
       return true;
     }
   },
